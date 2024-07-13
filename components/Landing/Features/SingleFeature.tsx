@@ -1,4 +1,4 @@
-import { Feature } from "@types/feature";
+import { Feature } from "@models/feature";
 import Link from "next/link";
 
 const SingleFeature = ({ feature }: { feature: Feature }) => {

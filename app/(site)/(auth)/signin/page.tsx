@@ -1,12 +1,12 @@
 "use client";
+import ForgotPassword from "@components/Auth/ForgetPassword";
+import WhyTalentConnect from "@components/Auth/WhyTalentConnect";
+import Loader from "@components/Common/Loader";
+import Modal from "@components/Modal";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import ForgotPassword from "/components/Auth/ForgetPassword";
-import WhyTalentConnect from "/components/Auth/WhyTalentConnect";
-import Loader from "/components/Common/Loader";
-import Modal from "/components/Modal";
 
 
 const Signin = () => {

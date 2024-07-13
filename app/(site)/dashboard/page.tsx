@@ -1,7 +1,7 @@
 'use client';
 
+import Dasbhoard from "@components/Dashboard";
 import React from "react";
-import Dasbhoard from "/components/Dashboard";
 
 const page = () => { 
   return (

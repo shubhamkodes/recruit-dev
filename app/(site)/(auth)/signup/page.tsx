@@ -1,10 +1,10 @@
 "use client";
+import WhyTalentConnect from "@components/Auth/WhyTalentConnect";
+import Loader from "@components/Common/Loader";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import WhyTalentConnect from "/components/Auth/WhyTalentConnect";
-import Loader from "/components/Common/Loader";
 
 const SignUp = () => {
   const router = useRouter();

@@ -1,5 +1,5 @@
+import DashboardHeader from "@components/Dashboard/Header";
 import React from "react";
-import DashboardHeader from "/components/Dashboard/Header";
 
 const layout = ({ children }: { children: React.ReactNode }) => {
   return (

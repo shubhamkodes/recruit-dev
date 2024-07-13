@@ -1,22 +1,8 @@
-// "use client";
-// import { signIn } from "next-auth/react";
-// import Image from "next/image";
-// import Link from "next/link";
-// import { useRouter } from "next/navigation";
-// import { useEffect, useState } from "react";
-// import toast from "react-hot-toast";
-// import Loader from "@/components/Common/Loader";
-// import ForgotPassword from "../ForgotPassword";
-// import axios from "axios";
-
-// pages/otp-login.tsx
 "use client";
-import Image from "next/image";
-import Link from "next/link";
+import WhyTalentConnect from "@components/Auth/WhyTalentConnect";
+import Loader from "@components/Common/Loader";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import WhyTalentConnect from "/components/Auth/WhyTalentConnect";
-import Loader from "/components/Common/Loader";
 
 const OtpLogin = () => {
   const router = useRouter();
