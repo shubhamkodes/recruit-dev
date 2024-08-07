@@ -60,18 +60,18 @@ const CandidateCard: React.FC<CandidateProps> = ({
   };
 
   return (
-    <div className="shadow-lg rounded-lg p-6 mb-6 container">
-      <div className="flex justify-between items-center">
+    <div className="shadow-xl rounded-lg mt-12 mb-6 p-4">
+      <div className="flex">
         <h2 className="text-xl font-bold mb-2">{name}</h2>
 
         <div className="flex flex-nowrap items-center">
           {showSelect && (
-            <div className="flex items-center mr-4">
+            <div className="flex items-center mr-4 justify-between">
               <input
                 type="checkbox"
                 checked={isSelected}
                 onChange={handleSelect}
-                className="mr-2 h-4 w-4 border border-primary rounded-sm bg-white checked:bg-primary checked:border-transparent focus:outline-none"
+                className="mr-2 h-4 w-4 border border-primary rounded-sm justify-between bg-white checked:bg-primary checked:border-transparent focus:outline-none"
               />
               <p>Select</p>
             </div>

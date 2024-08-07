@@ -22,7 +22,7 @@ const JobTable: React.FC<JobTableProps> = ({
   onPageChange,
 }) => {
   return (
-    <div className="bg-white shadow-md rounded-lg p-8">
+    <div className="background shadow-md rounded-lg p-8">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Users</h1>
         <span className="text-orange-500 font-semibold">

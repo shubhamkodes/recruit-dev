@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import AccelerateHiring from "./AccelerateYourHiring";
 import AggregatorSelector from "./AggregatorSelector";
 import Modal from "../Modal";
-import JobResults from "./JobResults/JobResults";
-import JobPeakViewSection from "./Components/JobPeakViewSection";
-import { fakeJobData } from "./Components/FakeJobGenerator";
 import JobTableContainer from "./Components/JobTableContainer";
+import JobList from "./Components/JobList";
+import UserSearchAnalytics from "./Components/UserSearchAnalytics";
 
 const Dasbhoard = () => {
   const [isModalOpen, setModalOpen] = useState(true);
@@ -14,6 +13,14 @@ const Dasbhoard = () => {
   return (
     <div className="px-8">
       <AccelerateHiring /> 
+      <div className="dashboard flex flex-col md:flex-row gap-8 p-8">
+      <div className="md:w-1/2 w-full">
+        <JobList />
+      </div>
+      <div className="md:w-1/2 w-full">
+        <UserSearchAnalytics />
+      </div>
+    </div>
       <JobTableContainer />
       <Modal isOpen={isModalOpen} onClose={handleModalClose}>
         <AggregatorSelector />

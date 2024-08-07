@@ -70,8 +70,8 @@ const ShortlistedCandidatesPage: React.FC = () => {
   };
 
   return (
-    <div className="relative p-4 container">
-      <div className="flex justify-between items-center py-10">
+    <div className="relative p-4 px-16">
+      <div className="flex justify-between items-center">
         <div>
           <div className="font-bold">Job ID: 123</div>
           <div className="text">Python Developer Profile</div>

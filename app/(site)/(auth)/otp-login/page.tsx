@@ -1,25 +1,68 @@
 "use client";
-import WhyTalentConnect from "@components/Auth/WhyTalentConnect";
-import Loader from "@components/Common/Loader";
+import React, { useState, FormEvent } from "react";
+import { useLoginViewModel } from "@app/api/viewmodel/SignInViewModel";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import Loader from "@components/Common/Loader";
+import WhyTalentConnect from "@components/Auth/WhyTalentConnect";
+import { ToastContainer, toast, Slide } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const OtpLogin = () => {
   const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const [loader, setLoader] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
+  const { loading, error, loginViaOtpSend, loginViaOtpVerify } = useLoginViewModel();
 
-  const handleSendOtp = async () => {};
+  const handleSendOtp = async () => {
+    const response = await loginViaOtpSend(email);
+    if (response) {
+      setOtpSent(true);
+      toast.success("OTP sent to your email!", {
+        position: "bottom-center",
+      });
+    } else {
+      toast.error("Failed to send OTP. Please try again.", {
+        position: "bottom-center",
+      });
+    }
+  };
 
-  const handleSubmit = async (e: { preventDefault: () => void }) => {};
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (otpSent) {
+      const response = await loginViaOtpVerify(email, parseInt(otp));
+      if (response) {
+        toast.success("Login successful!", {
+          position: "bottom-center",
+          onClose: () => router.push("/dashboard"),
+        });
+      } else {
+        toast.error("Login failed! Please check your OTP.", {
+          position: "bottom-center",
+        });
+      }
+    } else {
+      await handleSendOtp();
+    }
+  };
 
   return (
     <section className="min-h-screen py-14 dark:bg-dark lg:py-20">
+      <ToastContainer
+        position="bottom-center"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        transition={Slide}
+      />
       <div className="container mx-auto flex w-full flex-wrap">
-        <div className="flex min-h-screen w-full   lg:w-1/2">
+        <div className="flex min-h-screen w-full lg:w-1/2">
           <div
             className="wow fadeInUp relative mx-auto w-full overflow-hidden rounded-lg bg-white px-8 py-14 text-center dark:bg-dark-2 sm:px-12 md:px-[60px]"
             data-wow-delay=".15s"
@@ -44,9 +87,7 @@ const OtpLogin = () => {
                     </button>
                   </p>
                 </>
-              ) : (
-                <></>
-              )}
+              ) : null}
 
               {!otpSent ? (
                 <div className="mb-[22px]">
@@ -81,17 +122,17 @@ const OtpLogin = () => {
 
               <div className="mb-9">
                 <button
-                  onClick={handleSubmit}
                   type="submit"
                   className="flex w-full cursor-pointer items-center justify-center rounded-md border border-primary bg-primary px-5 py-3 text-base text-white transition duration-300 ease-in-out hover:bg-primary/90"
                 >
-                  {!otpSent ? "Get OTP" : "Login"} {loader && <Loader />}
+                  {!otpSent ? "Get OTP" : "Login"} {loading && <Loader />}
                 </button>
               </div>
+              {error && <p className="text-red-500">{error}</p>}
             </form>
           </div>
         </div>
-        <div className="flex min-h-screen w-full   bg-[#F5F9FE] lg:w-1/2">
+        <div className="flex min-h-screen w-full bg-[#F5F9FE] lg:w-1/2">
           <WhyTalentConnect />
         </div>
       </div>

@@ -51,7 +51,7 @@ const JobResults = () => {
 
   return (
     <div className="px-16 py-2">
-      <div className="flex justify-between items-center py-10">
+      <div className="flex justify-between items-center">
         <div>
           <div className="font-bold">Job ID: 123</div>
           <div className="text">Python Developer Profile</div>
@@ -64,7 +64,7 @@ const JobResults = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-6">
+      <div className="flex flex-wrap gap-6 mt-8">
         <FacetedFilter
           options={payFilters}
           title="Pay"
@@ -113,7 +113,7 @@ const JobResults = () => {
         )}
       </div>
 
-      <div className="mx-auto py-4">
+      <div className="py-4">
         {candidates.map((candidate, index) => (
           <CandidateCard key={index} {...candidate} />
         ))}
