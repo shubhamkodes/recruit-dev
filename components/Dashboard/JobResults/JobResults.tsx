@@ -13,6 +13,7 @@ import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { CrossCircledIcon } from "@radix-ui/react-icons";
 import CandidateCard from "../Components/CandidateCard";
 import { candidates } from "./FakeProfileData";
+import Link from "next/link";
 
 const JobResults = () => {
   const [selectedPayFilters, setSelectedPayFilters] = useState<Set<string>>(
@@ -58,7 +59,11 @@ const JobResults = () => {
         </div>
         <div>
           <Button className="bg-clear shadow-md text-primary text-base hover:bg-secondary space-x-2">
-            <span>View all shortlisted profiles</span>
+            <span>
+              <Link href={"/dashboard/shortlisted-candidates"}>
+              View all shortlisted profiles
+              </Link>
+            </span>
             <ChevronRightIcon className="w-6 h-6" />
           </Button>
         </div>

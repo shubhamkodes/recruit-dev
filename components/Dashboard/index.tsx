@@ -12,16 +12,20 @@ const Dasbhoard = () => {
 
   return (
     <div className="px-8">
-      <AccelerateHiring /> 
-      <div className="dashboard flex flex-col md:flex-row gap-8 p-8">
-      <div className="md:w-1/2 w-full">
-        <JobList />
-      </div>
-      <div className="md:w-1/2 w-full">
-        <UserSearchAnalytics />
-      </div>
-    </div>
-      <JobTableContainer />
+      {!isModalOpen && (
+        <>
+          <AccelerateHiring />
+          <div className="dashboard flex flex-col md:flex-row gap-8 p-8">
+            <div className="md:w-1/2 w-full">
+              <JobList />
+            </div>
+            <div className="md:w-1/2 w-full">
+              <UserSearchAnalytics />
+            </div>
+          </div>
+         <JobTableContainer />
+        </>
+      )}
       <Modal isOpen={isModalOpen} onClose={handleModalClose}>
         <AggregatorSelector />
       </Modal>

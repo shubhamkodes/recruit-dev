@@ -3,6 +3,7 @@
 import { Button } from "@components/ui/Button";
 import CandidateCard, { CandidateProps } from "../Components/CandidateCard";
 import React, { useState } from "react";
+import Link from "next/link";
 
 const generateFakeData = (): CandidateProps[] => {
   return Array.from({ length: 5 }, (_, index) => ({
@@ -99,12 +100,20 @@ const ShortlistedCandidatesPage: React.FC = () => {
           isShortlisted={selectedCandidates.has(index)}
         />
       ))}
-      <button
+      {/* <button
         onClick={scheduleInterviews}
         className="fixed bottom-4 right-4 bg-primary text-white px-16 py-4 rounded-md shadow-lg text-lg"
       >
         Schedule Interview ({selectedCandidates.size})
-      </button>
+      </button> */}
+
+      <Link href="/dashboard/shortlisted-candidates/interview-shedule" passHref>
+        <button
+          className="fixed bottom-4 right-4 bg-primary text-white px-16 py-4 rounded-md shadow-lg text-lg"
+        >
+          Schedule Interview ({selectedCandidates.size})
+        </button>
+      </Link>
     </div>
   );
 };

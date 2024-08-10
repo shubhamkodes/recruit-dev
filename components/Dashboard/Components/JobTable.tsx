@@ -1,5 +1,6 @@
 // components/JobTable.tsx
 import { DotsVerticalIcon, HamburgerMenuIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
 import React from "react";
 
 interface Job {
@@ -46,7 +47,9 @@ const JobTable: React.FC<JobTableProps> = ({
               <td className="py-4">{job.title}</td>
               <td className="py-4">{job.location}</td>
               <td className="py-4 text-orange-500 cursor-pointer">
+                <Link href={"dashboard/job-candidates"}>
                 View details
+                </Link>
               </td>
               <td className="py-4">
                 <DotsVerticalIcon />
