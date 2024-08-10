@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import UserRepo from '../repo/UserRepo';
-import { User } from '../model/User';
+import { User } from '../model/CommonUser';
 
 export const AuthViewModel = () => {
   const [loading, setLoading] = useState(false);

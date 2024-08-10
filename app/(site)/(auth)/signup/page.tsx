@@ -5,7 +5,7 @@ import Loader from "@components/Common/Loader";
 import Link from "next/link";
 import { FormEvent } from "react";
 import { AuthViewModel } from "@app/api/viewmodel/SignupViewModel";
-import { User } from "@app/api/model/User";
+import { User } from "@app/api/model/CommonUser";
 import { ToastContainer, toast, Slide } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';

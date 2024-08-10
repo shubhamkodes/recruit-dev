@@ -1,5 +1,7 @@
 import ApiService from '../service/ApiService';
-import { User } from '../model/User';
+import { User } from '../model/CommonUser';
+import { ResponseData, Users } from '../model/Users';
+import { VerificationRequest, VerificationResponse } from '../model/AggregatorResponse';
 
 class UserRepository {
 
@@ -61,8 +63,28 @@ class UserRepository {
       throw error;
     }
   }
+
+  // link aggregator
+
+  async sendOTP(user: Users): Promise<ResponseData> {
+    try {
+      const response = await ApiService.post<ResponseData>('/link-agg', user);
+      return response.data;
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      throw error;
+    }
+  }
+
+  async verifyOTP(data: VerificationRequest): Promise<VerificationResponse> {
+    try {
+      const response = await ApiService.post<VerificationResponse>('/verify-agg-otp', data);
+      return response.data;
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      throw error;
+    }
+  }
 }
-
-
 
 export default new UserRepository();

@@ -5,6 +5,7 @@ import Image from "next/image";
 import VerifyEmailScreen from "./VerificationEmail/VerificationEmail";
 import Modal from "@components/Modal";
 import { Aggregator } from "@models/Aggregator";
+import useUserViewModel from "@app/api/viewmodel/AggregatorViewModel";
 const aggregators: Aggregator[] = [
   {
     id: "linkedin",
@@ -25,22 +26,30 @@ const aggregators: Aggregator[] = [
 ];
 
 const AggregatorSelector = () => {
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    aggregator,
+    setAggregator,
+    otp,
+    setOtp,
+    otpResponse,
+    verificationResponse,
+    error,
+    sendOtp,
+    verifyOtp,
+  } = useUserViewModel();
+
   const [isEmailVerificationOpen, setEmailVerificationOpen] = useState(false);
+  const [selectedAggregator, setSelectedAggregator] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
   const handleEmailVerificationOpen = () => setEmailVerificationOpen(true);
   const handleEmailVerificationClose = () => setEmailVerificationOpen(false);
-
-  const [selectedAggregator, setSelectedAggregator] = useState<string | null>(
-    null
-  );
-
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
-    {}
-  );
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -73,23 +82,31 @@ const AggregatorSelector = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {
-      // Form submission logic here
-      console.log("Email:", email);
-      console.log("Password:", password);
-      console.log("Authorized:", isAuthorized);
-      handleEmailVerificationOpen();
+      await sendOtp();
+      if (otpResponse) {
+        handleEmailVerificationOpen();
+      }
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    await verifyOtp();
+    if (verificationResponse?.error) {
+      setErrors({ email: verificationResponse.error });
+    } else {
+      handleEmailVerificationClose();
     }
   };
 
   return (
     <div>
-      <div className="p-6 bg-white dark:bg-gray-800 rounded-lg   max-w-2xl mx-auto">
+      <div className="p-6 bg-white dark:bg-gray-800 rounded-lg max-w-2xl mx-auto">
         <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">
           Select website to link aggregator
         </h2>
@@ -111,7 +128,6 @@ const AggregatorSelector = () => {
                 height={49}
                 className="mb-2"
               />
-
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 {aggregator.description}
               </p>
@@ -135,7 +151,7 @@ const AggregatorSelector = () => {
             <p className="font-bold py-4 text-lg">
               Enter email id and password for {selectedAggregator}
             </p>
-            <form className="w-full  ">
+            <form className="w-full">
               <div className="mb-4 flex justify-between items-center">
                 <input
                   type="text"
@@ -200,7 +216,13 @@ const AggregatorSelector = () => {
         isOpen={isEmailVerificationOpen}
         onClose={handleEmailVerificationClose}
       >
-        <VerifyEmailScreen email={email} />
+        <VerifyEmailScreen
+          email={email}
+          otp={otp}
+          setOtp={setOtp}
+          verifyOtp={handleVerifyOtp}
+          error={error}
+        />
       </Modal>
     </div>
   );
