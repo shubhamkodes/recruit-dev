@@ -26,7 +26,7 @@ const Page: React.FC = () => {
       <InlineWidget
         url="https://calendly.com/tech-assetsavvy/interview-schedule"
         prefill={{
-          name: "Abhishek",
+          name: "Shubham Tomar",
           email: "shubtomar33@gmail.com",
         }}
         pageSettings={{
