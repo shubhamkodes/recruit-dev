@@ -54,7 +54,8 @@ const UserSearchAnalytics: React.FC = () => {
 
   return (
     <div className="user-search-analytics w-full shadow-l rounded-xl p-8 border border-[#E6EBF3]">
-      <Bar data={data} options={options} />
+      {/* <Bar data={data} options={options} /> */}
+      <Bar data={data}  />
     </div>
   );
 };

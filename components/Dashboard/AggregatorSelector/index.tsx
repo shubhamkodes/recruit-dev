@@ -25,7 +25,16 @@ const aggregators: Aggregator[] = [
   },
 ];
 
-const AggregatorSelector = () => {
+interface AggregatorSelectorProps {
+  onClose: () => void;
+}
+
+const AggregatorSelector: React.FC<AggregatorSelectorProps> = ( onClose ) => {
+ 
+  const handleClose = () => {
+    onClose.onClose()
+  };
+
   const {
     email,
     setEmail,
@@ -97,6 +106,8 @@ const AggregatorSelector = () => {
 
   const handleVerifyOtp = async () => {
     await verifyOtp();
+    handleEmailVerificationClose();
+    handleClose()
     if (verificationResponse?.error) {
       setErrors({ email: verificationResponse.error });
     } else {

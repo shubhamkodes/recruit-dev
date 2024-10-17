@@ -1,7 +1,5 @@
 "use client";
 import React from "react";
-import { FiChevronUp, FiChevronDown } from "react-icons/fi";
-import "tailwindcss/tailwind.css";
 import { InlineWidget, useCalendlyEventListener } from "react-calendly";
 
 const Page: React.FC = () => {

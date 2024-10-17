@@ -27,7 +27,7 @@ const Dasbhoard = () => {
         </>
       )}
       <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-        <AggregatorSelector />
+        <AggregatorSelector onClose={handleModalClose}/>
       </Modal>
     </div>
   );
