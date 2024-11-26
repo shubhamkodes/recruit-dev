@@ -1,44 +1,47 @@
-import ApiService from '../service/ApiService';
-import { User } from '../model/CommonUser';
-import { ResponseData, Users } from '../model/Users';
-import { VerificationRequest, VerificationResponse } from '../model/AggregatorResponse';
+import ApiService from "../service/ApiService";
+import { User } from "../model/CommonUser";
+import { ResponseData, Users } from "../model/Users";
+import {
+  VerificationRequest,
+  VerificationResponse,
+} from "../model/AggregatorResponse";
 
 class UserRepository {
-
-
   async loginViaOtpSend(email: string): Promise<any> {
     try {
-      const response = await ApiService.post('/send-otp', { email });
+      const response = await ApiService.post("/send-otp", { email });
       return response.data;
     } catch (error) {
       throw error;
     }
   }
-
+ 
   async loginViaOtpVerify(email: string, otp: number): Promise<any> {
     try {
-      const response = await ApiService.post('/verify-otp', { email, otp });
+      const response = await ApiService.post("/verify-otp", { email, otp });
       return response.data;
     } catch (error) {
       throw error;
     }
   }
-
 
   async signUp(user: User): Promise<any> {
     try {
-      const response = await ApiService.post('/users', user);
+      const response = await ApiService.post("/users", user);
       return response.data;
     } catch (error) {
       throw error;
     }
   }
 
-  async login(username: string, password: string): Promise<any> {
+  async login(company_email: string, password: string): Promise<any> {
     try {
-      const response = await ApiService.post('/login', { username, password });
-      if (typeof response.data === 'string' && !response.data.endsWith('/')) {
-        response.data += '/';
+      const response = await ApiService.post("/token/", {
+        company_email,
+        password,
+      });
+      if (typeof response.data === "string" && !response.data.endsWith("/")) {
+        response.data += "/";
       }
       return response.data;
     } catch (error) {
@@ -48,16 +51,26 @@ class UserRepository {
 
   async sendOtp(email: string): Promise<any> {
     try {
-      const response = await ApiService.post('/send-password-reset-otp', { email });
+      const response = await ApiService.post("/send-password-reset-otp", {
+        email,
+      });
       return response.data;
     } catch (error) {
       throw error;
     }
   }
 
-  async resetPassword(email: string, otp: number, newPassword: string): Promise<any> {
+  async resetPassword(
+    email: string,
+    otp: number,
+    newPassword: string
+  ): Promise<any> {
     try {
-      const response = await ApiService.post('/reset-password', { email, otp, new_password: newPassword });
+      const response = await ApiService.post("/reset-password", {
+        email,
+        otp,
+        new_password: newPassword,
+      });
       return response.data;
     } catch (error) {
       throw error;
@@ -68,23 +81,27 @@ class UserRepository {
 
   async sendOTP(user: Users): Promise<ResponseData> {
     try {
-      const response = await ApiService.post<ResponseData>('/link-agg', user);
+      const response = await ApiService.post<ResponseData>("/link-agg", user);
       return response.data;
     } catch (error) {
-      console.error('Error sending OTP:', error);
+      console.error("Error sending OTP:", error);
       throw error;
     }
   }
 
   async verifyOTP(data: VerificationRequest): Promise<VerificationResponse> {
     try {
-      const response = await ApiService.post<VerificationResponse>('/verify-agg-otp', data);
+      const response = await ApiService.post<VerificationResponse>(
+        "/verify-agg-otp",
+        data
+      );
       return response.data;
     } catch (error) {
-      console.error('Error verifying OTP:', error);
+      console.error("Error verifying OTP:", error);
       throw error;
     }
   }
+  
 }
 
 export default new UserRepository();

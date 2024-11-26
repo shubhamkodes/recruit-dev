@@ -1,10 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    trailingSlash: true,
     async rewrites() {
       return [
         {
           source: '/api/:path*',
-          destination: 'http://34.217.12.202/api/:path*',
+          destination: 'http://65.1.56.77/api/:path*',
         },
       ];
     },
