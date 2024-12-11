@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { useLoginViewModel } from "@app/api/viewmodel/SignInViewModel";
 import { ToastContainer, toast, Slide } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 const Signin = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -18,7 +18,7 @@ const Signin = () => {
   const handleModalClose = () => setModalOpen(false);
 
   const router = useRouter();
-  const { loading, error, login } = useLoginViewModel();  
+  const { loading, error, login } = useLoginViewModel();
 
   const [loginData, setLoginData] = useState({
     email: "",
@@ -30,24 +30,38 @@ const Signin = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    toast.info('Signing in...', { autoClose: false, position: 'bottom-center' });
+    toast.info("Signing in...", {
+      autoClose: false,
+      position: "bottom-center",
+    });
 
-    const success = await login(loginData.email, loginData.password);
+    // Simulating API call with a 2-second delay
+    const fakeLogin = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // Replace `true` with a condition for success or failure simulation
+        const isSuccess = true; // Change this to false to simulate a failed login
+        isSuccess
+          ? resolve(true)
+          : reject("Login failed! Please check your credentials.");
+      }, 2000);
+    });
 
+    // const success = await login(loginData.email, loginData.password);
+    await fakeLogin;
     toast.dismiss();
 
-    if (success) {
-      toast.success('Login successful!', {
+    if (true) {
+      toast.success("Login successful!", {
         autoClose: 2000,
-        position: 'bottom-center',
+        position: "bottom-center",
       });
       setTimeout(() => {
-        router.push('/dashboard');
+        router.push("/dashboard");
       }, 2000); // Wait for 2 seconds before redirecting
     } else {
-      toast.error(error || 'Login failed! Please check your credentials.', {
+      toast.error(error || "Login failed! Please check your credentials.", {
         autoClose: 2000,
-        position: 'bottom-center',
+        position: "bottom-center",
       });
     }
   };

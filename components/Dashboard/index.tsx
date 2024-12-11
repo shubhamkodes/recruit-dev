@@ -7,7 +7,7 @@ import JobList from "./Components/JobList";
 import UserSearchAnalytics from "./Components/UserSearchAnalytics";
 
 const Dasbhoard = () => {
-  const [isModalOpen, setModalOpen] = useState(true);
+  const [isModalOpen, setModalOpen] = useState(false);
   const handleModalClose = () => setModalOpen(false);
 
   return (
