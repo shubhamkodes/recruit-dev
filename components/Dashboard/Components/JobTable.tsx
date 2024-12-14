@@ -1,16 +1,8 @@
-// components/JobTable.tsx
-import { DotsVerticalIcon, HamburgerMenuIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
-import React from "react";
-
-interface Job {
-  jobId: number;
-  title: string;
-  location: string;
-}
+import { Job } from "@app/api/model/JobResponse";
+import Link from "next/link"; // Correct import for Link from Next.js
 
 interface JobTableProps {
-  jobs: Job[];
+  jobs: Job[]; 
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
@@ -25,9 +17,9 @@ const JobTable: React.FC<JobTableProps> = ({
   return (
     <div className="background shadow-md rounded-lg p-8">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Users</h1>
+        <h1 className="text-2xl font-bold">Job List</h1>
         <span className="text-orange-500 font-semibold">
-          Completed Job Search
+          Available Jobs
         </span>
       </div>
       <table className="w-full text-left">
@@ -37,22 +29,18 @@ const JobTable: React.FC<JobTableProps> = ({
             <th className="text-orange-500 py-2">Job Title</th>
             <th className="text-orange-500 py-2">Location</th>
             <th className="py-2"></th>
-            <th className="py-2"></th>
           </tr>
         </thead>
         <tbody>
           {jobs.map((job) => (
-            <tr key={job.jobId} className="border-t">
-              <td className="py-4">{job.jobId}</td>
-              <td className="py-4">{job.title}</td>
+            <tr key={job.id} className="border-t">
+              <td className="py-4">{job.id}</td>
+              <td className="py-4">{job.keyword}</td>
               <td className="py-4">{job.location}</td>
               <td className="py-4 text-orange-500 cursor-pointer">
-                <Link href={"dashboard/job-candidates"}>
-                View details
+                <Link href={`/dashboard/job-candidates?id=${job.id}`}>
+                  View details
                 </Link>
-              </td>
-              <td className="py-4">
-                <DotsVerticalIcon />
               </td>
             </tr>
           ))}

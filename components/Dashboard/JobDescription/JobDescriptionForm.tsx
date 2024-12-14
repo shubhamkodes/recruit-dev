@@ -1,7 +1,8 @@
-import ApiService from "@app/api/service/ApiService";
-import Loader from "@components/Common/Loader";
 import React, { useState } from "react";
 import { ToastContainer, toast, Slide } from "react-toastify";
+import JobViewModel from "@app/api/viewmodel/JobViewModel";
+import Loader from "@components/Common/Loader";
+import "react-toastify/dist/ReactToastify.css";
 
 const JobDescriptionForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -13,72 +14,65 @@ const JobDescriptionForm: React.FC = () => {
     max_exp: "",
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
   };
 
-  const [isLoading, setIsLoading] = useState(false);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setIsLoading(true);
-      toast.info("Processing...", {
+      toast.info("Processing your request...", {
         autoClose: false,
-        position: "bottom-center",
+        position: "top-right",
       });
 
-      // Simulating API call with a 2-second delay
-      const fakeApiCall = new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // Replace true/false to simulate success or failure
-          const isSuccess = true; // Change to false to simulate an error
-          isSuccess
-            ? resolve({ data: { message: "Simulated successful response" } })
-            : reject({
-                response: { data: { message: "Simulated error response" } },
-              });
-        }, 2000);
-      });
-      toast.dismiss();
+      // Call the API
+      const response = await JobViewModel.searchJobs(
+        formData.keyword,
+        formData.min_ctc,
+        formData.max_ctc,
+        formData.location,
+        formData.min_exp,
+        formData.max_exp
+      );
 
-      const response: any = await fakeApiCall;
+      toast.dismiss(); // Remove the "Processing..." toast
       toast.success("Successfully Submitted! Now search is in process.", {
-        autoClose: 2000,
-        position: "bottom-center",
+        autoClose: 3000,
+        position: "top-right",
       });
-      console.log("Simulated API Response:", response.data);
-
-      // Handle success (e.g., navigate to the next step or display a success message)
+      console.log("Job Search Task ID:", response.data.task_id);
     } catch (error: any) {
-      console.error("Simulated API Error:", error);
+      toast.dismiss();
+      console.error("Job Search Error:", error);
 
-      // Determine the error message
       const errorMessage =
-        error.response?.data?.message || // Simulated backend error message if available
-        error.message || // JavaScript error message
-        "Something went wrong!!"; // Default fallback message
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong!";
 
       toast.error(errorMessage, {
-        autoClose: 2000,
-        position: "bottom-center",
+        autoClose: 3000,
+        position: "top-right",
       });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
+
   return (
-    <div>
+    <div className="p-6 max-w-lg mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md">
       <ToastContainer
-        position="bottom-center"
-        autoClose={4000}
+        position="top-right"
+        autoClose={3000}
         hideProgressBar={false}
-        newestOnTop={false}
         closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
         pauseOnHover
+        draggable
         transition={Slide}
       />
 
@@ -90,6 +84,7 @@ const JobDescriptionForm: React.FC = () => {
           Submit Job Description
         </p>
 
+        {/* Keyword Input */}
         <div className="mb-4">
           <label
             className="block text-gray-700 dark:text-gray-300 mb-2"
@@ -98,15 +93,16 @@ const JobDescriptionForm: React.FC = () => {
             Job Role
           </label>
           <input
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-gray-200"
             type="text"
             id="keyword"
             value={formData.keyword}
             onChange={handleInputChange}
             placeholder="e.g. Python Developer"
+            className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
           />
         </div>
 
+        {/* Location Input */}
         <div className="mb-4">
           <label
             className="block text-gray-700 dark:text-gray-300 mb-2"
@@ -115,16 +111,17 @@ const JobDescriptionForm: React.FC = () => {
             Location
           </label>
           <input
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-gray-200"
             type="text"
             id="location"
             value={formData.location}
             onChange={handleInputChange}
             placeholder="e.g. Gurugram"
+            className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
           />
         </div>
 
-        <div className="flex flex-row ">
+        {/* CTC and Experience Inputs */}
+        <div className="grid grid-cols-2 gap-4">
           <div className="mb-4">
             <label
               className="block text-gray-700 dark:text-gray-300 mb-2"
@@ -133,16 +130,16 @@ const JobDescriptionForm: React.FC = () => {
               Minimum CTC (in Lakhs)
             </label>
             <input
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-gray-200"
               type="text"
               id="min_ctc"
               value={formData.min_ctc}
               onChange={handleInputChange}
               placeholder="e.g. 3LPA"
+              className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
             />
           </div>
 
-          <div className="mb-4 ps-24">
+          <div className="mb-4">
             <label
               className="block text-gray-700 dark:text-gray-300 mb-2"
               htmlFor="max_ctc"
@@ -150,17 +147,15 @@ const JobDescriptionForm: React.FC = () => {
               Maximum CTC (in Lakhs)
             </label>
             <input
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-gray-200"
               type="text"
               id="max_ctc"
               value={formData.max_ctc}
               onChange={handleInputChange}
               placeholder="e.g. 50LPA"
+              className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
             />
           </div>
-        </div>
 
-        <div className="flex flex-row ">
           <div className="mb-4">
             <label
               className="block text-gray-700 dark:text-gray-300 mb-2"
@@ -169,16 +164,16 @@ const JobDescriptionForm: React.FC = () => {
               Minimum Experience (in years)
             </label>
             <input
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-gray-200"
               type="text"
               id="min_exp"
               value={formData.min_exp}
               onChange={handleInputChange}
               placeholder="e.g. 2"
+              className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
             />
           </div>
 
-          <div className="mb-4 ps-16">
+          <div className="mb-4">
             <label
               className="block text-gray-700 dark:text-gray-300 mb-2"
               htmlFor="max_exp"
@@ -186,22 +181,24 @@ const JobDescriptionForm: React.FC = () => {
               Maximum Experience (in years)
             </label>
             <input
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-gray-200"
               type="text"
               id="max_exp"
               value={formData.max_exp}
               onChange={handleInputChange}
               placeholder="e.g. 8"
+              className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
             />
           </div>
         </div>
 
+        {/* Submit Button */}
         <button
           type="submit"
-          className="flex w-full cursor-pointer items-center justify-center rounded-md border border-primary bg-primary px-5 py-4 rounded-full text-base text-white transition duration-300 ease-in-out hover:bg-primary/90"
+          className="flex w-full justify-center items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
           disabled={isLoading}
         >
-          {isLoading ? "Submitting..." : "Submit"} {isLoading && <Loader />}
+          {isLoading ? "Submitting..." : "Submit"}
+          {isLoading && <Loader />}
         </button>
       </form>
     </div>

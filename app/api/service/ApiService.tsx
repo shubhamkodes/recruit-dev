@@ -1,15 +1,20 @@
 import axios from 'axios';
+import TokenManager from '../TokenManager';
 
 const ApiService = axios.create({
-  baseURL: '/api', 
+  baseURL: '/',
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
+  withCredentials: true, 
 });
 
 ApiService.interceptors.request.use(
   (config) => {
+     const accessToken = TokenManager.getAccessToken();
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
     console.log('Request:', config);
     return config;
   },
@@ -27,6 +32,7 @@ ApiService.interceptors.response.use(
   (error) => {
     console.error('Response Error:', error);
     if (error.response) {
+      console.error('Response Error Details:', error.response.data);
     }
     return Promise.reject(error);
   }

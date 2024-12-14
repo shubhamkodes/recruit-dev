@@ -16,12 +16,12 @@ const Dasbhoard = () => {
         <>
           <AccelerateHiring />
           <div className="dashboard flex flex-col md:flex-row gap-8 p-8">
-            <div className="md:w-1/2 w-full">
+            <div className="w-full">
               <JobList />
             </div>
-            <div className="md:w-1/2 w-full">
+            {/* <div className="md:w-1/2 w-full">
               <UserSearchAnalytics />
-            </div>
+            </div> */}
           </div>
          <JobTableContainer />
         </>
