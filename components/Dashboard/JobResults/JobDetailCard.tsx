@@ -1,67 +1,59 @@
-import { Job } from "@app/api/model/JobResponse";
-
+import { getJobStatusDisplayValue, Job } from "@app/api/model/JobResponse";
+import { getNoticePeriodDisplayValue } from "@app/api/model/NoticePeriodStatus";
 interface JobDetailProps {
   job: Job;
 }
-
 const JobDetailCard: React.FC<JobDetailProps> = ({ job }) => {
   return (
-    <div className="bg-white   rounded-lg p-6 hover:shadow-xl transition duration-300 ease-in-out">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="font-bold text-xl text-gray-800">Job ID: {job.id}</h2>
-        <span
-          className={`px-4 py-1 text-sm font-medium rounded-full ${
-            job.status === "Active"
-              ? "bg-green-100 text-green-600"
-              : "bg-red-100 text-red-600"
-          }`}
-        >
-          {job.status}
-        </span>
+    <div className="rounded-lg p-6  ">
+      {/* Job Title and Status */}
+      <div className="mb-4 flex items-center space-x-4">
+        <h1 className="font-bold text-xl text-gray-800">Job ID: {job.id}</h1>
       </div>
 
-      <div className="text-gray-600 space-y-2">
-        <p>
-          <span className="font-semibold text-lg text-gray-700">
-            {job.keyword}{" "}
-          </span>
-          <span font-medium text-sm text-gray-700>
-            (Experience {job.min_exp} - {job.max_exp} years)
-          </span>
-        </p>
-        <p>
-          <span className="font-medium">Location:</span> {job.location}
-        </p>
-        <p>
-          <span className="font-medium">CTC:</span> {job.min_ctc} -{" "}
-          {job.max_ctc} LPA
-        </p>
-        {job.notice_period && (
-          <p>
-            <span className="font-medium">Notice Period:</span>{" "}
-            {job.notice_period}
-          </p>
-        )}
+      <h2 className="font-bold text-lg text-gray-800 mb-4">{job.keyword}</h2>
 
-        {job.skills && job.skills.length > 0 && (
+      {/* Job Details */}
+      <div className="space-y-4 text-gray-600">
+        <div>
+          <p className="text-sm text-gray-500">Location</p>
+          <p className="text-md text-gray-800">{job.location}</p>
+        </div>
+        <div>
+          <p className="text-sm text-gray-500">CTC</p>
+          <p className="text-md text-gray-800">
+            {job.min_ctc} - {job.max_ctc} LPA
+          </p>
+        </div>
+        {job.notice_period && (
           <div>
-            <span className="font-medium">Skills:</span>
-            <ul className="list-disc list-inside text-gray-600">
-              {job.skills.map((skill, index) => (
-                <li
-                  key={index}
-                  className="inline-block bg-gray-100 text-gray-800 rounded-full px-3 py-1 text-sm mr-2 mt-2"
-                >
-                  {skill}
-                </li>
-              ))}
-            </ul>
+            <p className="text-sm text-gray-500">Notice Period</p>
+            <p className="text-md text-gray-800">
+              {getNoticePeriodDisplayValue(job.notice_period)}
+            </p>
           </div>
         )}
-        <p className="text-sm text-gray-500">
-          Posted on: {new Date(job.created_at).toLocaleDateString()}
-        </p>
+        {job.skills && job.skills.length > 0 && (
+          <div>
+            <p className="text-sm text-gray-500 mb-2">Skills</p>
+            <div className="flex flex-wrap gap-2">
+              {job.skills.map((skill, index) => (
+                <span
+                  key={index}
+                  className="bg-gray-100 text-gray-800 rounded-full px-3 py-1 text-sm"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Footer */}
+      <p className="mt-6 text-sm text-gray-500">
+        Posted on: {new Date(job.created_at).toLocaleDateString()}
+      </p>
     </div>
   );
 };

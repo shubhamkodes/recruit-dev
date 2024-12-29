@@ -78,7 +78,6 @@ class UserRepository {
   }
 
   // link aggregator
-
   async sendOTP(user: Users): Promise<ResponseData> {
     try {
       const response = await ApiService.post<ResponseData>("/link-agg", user);

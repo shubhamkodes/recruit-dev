@@ -22,8 +22,9 @@ import {
 import { useSearchParams } from "next/navigation";
 import { useEffect as useEffecty } from "react";
 import JobViewModel from "@app/api/viewmodel/JobViewModel";
-import { JobDetailResponse } from "@app/api/model/JobResponse";
+import { JobDetailResponse, JobStatus } from "@app/api/model/JobResponse";
 import JobDetailCard from "./JobDetailCard";
+import EmptyState from "@components/Common/EmptyStateBox";
 
 const JobResults = () => {
   const searchParams = useSearchParams();
@@ -84,6 +85,36 @@ const JobResults = () => {
     }
   };
 
+  // Dynamic Empty State Messages based on Job Status
+  const getEmptyStateMessage = (status?: JobStatus) => {
+    switch (status) {
+      case JobStatus.FAILED:
+        return {
+          message: "Oops! Failed",
+          description:
+            "The search encountered an issue and could not be processed successfully.",
+        };
+      case JobStatus.PENDING:
+        return {
+          message: "Job Processing in progress",
+          description:
+            "The job is still being processed. Please check back later.",
+        };
+      case JobStatus.SUCCESS:
+        return {
+          message: "No Candidates Found",
+          description: "Start by new job search.",
+        };
+      default:
+        return {
+          message: "In Progress",
+          description: "Please wait for sometime or refresh...",
+        };
+    }
+  };
+
+  const emptyStateMessage = getEmptyStateMessage(jobDetail?.data?.status);
+
   const [selectedPayFilters, setSelectedPayFilters] = useState<Set<string>>(
     new Set()
   );
@@ -119,9 +150,11 @@ const JobResults = () => {
   ].some((filterSet) => filterSet.size > 0);
 
   return (
-    <div className="px-16 py-2">
-      <div className="flex justify-between items-center">
-        <div>
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 px-4 md:px-8 py-4">
+      {/* Left Panel - Job Detail */}
+      <div className="col-span-1 md:col-span-1  border-gray-200 pr-4 w-100">
+        {/* Use w-64 or adjust based on desired width */}
+        <div className="mb-4">
           {jobDetail?.data ? (
             <JobDetailCard job={jobDetail.data} />
           ) : (
@@ -140,78 +173,80 @@ const JobResults = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-6 mt-8">
-        <FacetedFilter
-          options={payFilters}
-          title="Pay"
-          selectedValues={selectedPayFilters}
-          onChange={setSelectedPayFilters}
-        />
-        <FacetedFilter
-          options={jobTypeFilters}
-          title="Job Type"
-          selectedValues={selectedJobTypeFilters}
-          onChange={setSelectedJobTypeFilters}
-        />
-        <FacetedFilter
-          options={educationLevelFilters}
-          title="Education Level"
-          selectedValues={selectedEducationLevelFilters}
-          onChange={setSelectedEducationLevelFilters}
-        />
-        <FacetedFilter
-          options={locationFilters}
-          title="Locations"
-          selectedValues={selectedLocationFilters}
-          onChange={setSelectedLocationFilters}
-        />
-        <FacetedFilter
-          options={locationTypeFilters}
-          title="Location Type"
-          selectedValues={selectedLocationTypeFilters}
-          onChange={setSelectedLocationTypeFilters}
-        />
-        <FacetedFilter
-          options={candidateSelectionState}
-          title="Candidate State"
-          selectedValues={selectedCandidateSelectionState}
-          onChange={setSelectedCandidateSelectionState}
-        />
+      {/* Right Panel - Candidates Listing */}
+      <div className="col-span-3 md:col-span-3">
+        {/* Filter Section */}
+        {/* <div className="flex flex-wrap gap-4 mb-6">
+          <FacetedFilter
+            options={payFilters}
+            title="Pay"
+            selectedValues={selectedPayFilters}
+            onChange={setSelectedPayFilters}
+          />
+          <FacetedFilter
+            options={jobTypeFilters}
+            title="Job Type"
+            selectedValues={selectedJobTypeFilters}
+            onChange={setSelectedJobTypeFilters}
+          />
+          <FacetedFilter
+            options={educationLevelFilters}
+            title="Education Level"
+            selectedValues={selectedEducationLevelFilters}
+            onChange={setSelectedEducationLevelFilters}
+          />
+          <FacetedFilter
+            options={locationFilters}
+            title="Locations"
+            selectedValues={selectedLocationFilters}
+            onChange={setSelectedLocationFilters}
+          />
+          <FacetedFilter
+            options={locationTypeFilters}
+            title="Location Type"
+            selectedValues={selectedLocationTypeFilters}
+            onChange={setSelectedLocationTypeFilters}
+          />
+          <FacetedFilter
+            options={candidateSelectionState}
+            title="Candidate State"
+            selectedValues={selectedCandidateSelectionState}
+            onChange={setSelectedCandidateSelectionState}
+          />
 
-        {anyFilterSelected && (
-          <Button
-            onClick={clearAllFilters}
-            className="bg-clear shadow-md text-primary text-base hover:bg-secondary py-6 flex items-center  space-x-2"
-          >
-            <CrossCircledIcon className="w-6 h-6" />
-            <span>Clear All Filters</span>
-          </Button>
-        )}
-      </div>
+          {anyFilterSelected && (
+            <Button
+              onClick={clearAllFilters}
+              className="bg-clear shadow-md text-primary text-base hover:bg-secondary py-2 flex items-center space-x-2"
+            >
+              <CrossCircledIcon className="w-6 h-6" />
+              <span>Clear All Filters</span>
+            </Button>
+          )}
+        </div> */}
 
-      <div className="py-4">
-        {Array.isArray(candidates) && candidates.length > 0 ? (
-          candidates.map((candidate) => (
-            <CandidateCard
-              key={candidate.candidate_id}
-              candidate={candidate}
-              onUpdateStatus={(status) =>
-                handleUpdateStatus(candidate.candidate_id, status)
-              }
-              onSelect={(selected) =>
-                console.log(`Selected ${candidate.candidate.name}: ${selected}`)
-              }
+        {/* Candidates Section */}
+        <div>
+          {Array.isArray(candidates) && candidates.length > 0 ? (
+            candidates.map((candidate) => (
+              <CandidateCard
+                key={candidate.candidate_id}
+                candidate={candidate}
+                onUpdateStatus={(status) =>
+                  handleUpdateStatus(candidate.candidate_id, status)
+                }
+              />
+            ))
+          ) : (
+            <EmptyState
+              message={emptyStateMessage.message}
+              description={emptyStateMessage.description}
             />
-          ))
-        ) : (
-          <p>No candidates available</p>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
 export default JobResults;
-function useEffect(arg0: () => void, arg1: (string | string[] | undefined)[]) {
-  throw new Error("Function not implemented.");
-}

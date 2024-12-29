@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
 import "tailwindcss/tailwind.css";
 import { InlineWidget } from "react-calendly";
-import { PanelResponse } from "@app/api/model/PanelRequest";
+import { PanelResponse, PanelsResponse } from "@app/api/model/PanelRequest";
 import PanelViewModel from "@app/api/viewmodel/PannelViewModel";
-
+import PannelViewModel from "@app/api/viewmodel/PannelViewModel";
 
 interface TimePickerProps {
   selectedTime: string | null;
@@ -192,11 +192,19 @@ const OldPage: React.FC = () => {
   const [panelName, setPanelName] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [members, setMembers] = useState<string[]>([]);
-  const [panels, setPanels] = useState<PanelResponse[]>([]);
+  const [panels, setPanels] = useState<PanelsResponse>();
+
+  const fetchPanels = async () => {
+    try {
+      const panels = await PannelViewModel.getPanels();
+      setPanels(panels);
+    } catch (error) {
+      console.error("Failed to fetch job candidates:", error);
+    }
+  };
 
   useEffect(() => {
-    // Fetch panels from the ViewModel on component mount
-    setPanels(PanelViewModel.getPanels());
+    fetchPanels();
   }, []);
 
   const addPanelist = (name: string, email: string, jobRole: string) => {
@@ -217,8 +225,8 @@ const OldPage: React.FC = () => {
     };
 
     try {
-      const newPanel = await PanelViewModel.createNewPanel(panelRequest);
-      setPanels([...panels, newPanel]);
+      await PanelViewModel.createNewPanel(panelRequest);
+      fetchPanels();
       alert("Panel created successfully!");
     } catch (error) {
       console.error("Error creating panel:", error);
@@ -236,45 +244,60 @@ const OldPage: React.FC = () => {
           Select and organize your interview panel members and schedule the
           interview effortlessly.
         </p>
-        <div className="flex items-center mb-6 gap-5">
-          <div className="flex-grow flex items-center p-5 border border-gray-300 rounded-xl bg-white shadow-md">
-            <input
-              type="text"
-              placeholder="Panel Name"
-              className="p-2 text-lg font-bold border-none focus:outline-none"
-              value={panelName || ""}
-              onChange={(e) => setPanelName(e.target.value)}
-            />
+
+        <div className="flex  mb-6 gap-5">
+          <div>
+            <div className="flex-grow flex   p-5 border border-gray-300 rounded-xl bg-white shadow-md">
+              <input
+                type="text"
+                placeholder="Panel Name"
+                className="p-2 text-lg font-bold border-none focus:outline-none"
+                value={panelName || ""}
+                onChange={(e) => setPanelName(e.target.value)}
+              />
+            </div>
+
+            <div className="mt-10">
+              <h2 className="text-lg font-semibold mb-4">Panels</h2>
+              <ul>
+                {panels?.data.map((panel) => (
+                  <li key={panel.id} className="mb-4">
+                    <h3 className="font-bold text-lg">{panel.name}</h3>
+                    <p className="text-sm text-gray-600">Role: {panel.role}</p>
+                    <ul className="ml-4 mt-2">
+                      {panel.members.map((member, index) => (
+                        <li key={index} className="text-sm text-gray-800">
+                          {member}
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <div className="flex-grow flex items-center p-5 border border-gray-300 rounded-xl bg-white shadow-md">
-            <input
-              type="text"
-              placeholder="Role"
-              className="p-2 text-lg font-bold border-none focus:outline-none"
-              value={role || ""}
-              onChange={(e) => setRole(e.target.value)}
-            />
+          <div className="relative flex-grow flex items-center p-5 border border-gray-300 rounded-xl justify-between bg-white shadow-md">
+            <span className="text-lg font-semibold">Time</span>
+            <div
+              className="flex flex-col items-center cursor-pointer"
+              onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
+            >
+              <FiChevronUp size={20} />
+              <FiChevronDown size={20} />
+            </div>
+            {isDatePickerOpen && (
+              <DatePickerComponent
+                onClose={() => setIsDatePickerOpen(false)}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                selectedTime={selectedTime}
+                setSelectedTime={setSelectedTime}
+              />
+            )}
           </div>
         </div>
-        <div className="relative flex-grow flex items-center p-5 border border-gray-300 rounded-xl justify-between bg-white shadow-md">
-          <span className="text-lg font-semibold">Time</span>
-          <div
-            className="flex flex-col items-center cursor-pointer"
-            onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
-          >
-            <FiChevronUp size={20} />
-            <FiChevronDown size={20} />
-          </div>
-          {isDatePickerOpen && (
-            <DatePickerComponent
-              onClose={() => setIsDatePickerOpen(false)}
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-              selectedTime={selectedTime}
-              setSelectedTime={setSelectedTime}
-            />
-          )}
-        </div>
+
+        <br></br>
         <button
           onClick={() => setIsModalOpen(true)}
           className="px-4 py-2 text-lg text-orange-600 border border-orange-600 rounded-full bg-orange-100 hover:bg-orange-200 transition"
@@ -292,27 +315,10 @@ const OldPage: React.FC = () => {
         onClick={savePanel}
         className="mt-6 px-6 py-3 bg-orange-500 text-white rounded-lg font-semibold transition hover:bg-orange-600"
       >
-        Save Panel
+        Schedule
       </button>
-      <div className="mt-10">
-        <h2 className="text-lg font-semibold mb-4">Panels</h2>
-        <ul>
-          {panels.map((panel) => (
-            <li key={panel.id} className="mb-4">
-              <h3 className="font-bold text-lg">{panel.name}</h3>
-              <p className="text-sm text-gray-600">Role: {panel.role}</p>
-              <ul className="ml-4 mt-2">
-                {panel.members.map((member, index) => (
-                  <li key={index} className="text-sm text-gray-800">
-                    {member}
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
-      </div>
-      {selectedDate && selectedTime && panelName && (
+
+      {/* {selectedDate && selectedTime && panelName && (
         <InlineWidget
           url=""
           prefill={{
@@ -330,7 +336,7 @@ const OldPage: React.FC = () => {
             textColor: "4d5055",
           }}
         />
-      )}
+      )} */}
     </div>
   );
 };

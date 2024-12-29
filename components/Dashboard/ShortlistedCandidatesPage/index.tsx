@@ -10,6 +10,7 @@ import CandidateViewModel from "@app/api/viewmodel/CandidateViewModel";
 import { JobDetailResponse } from "@app/api/model/JobResponse";
 import JobViewModel from "@app/api/viewmodel/JobViewModel";
 import JobDetailCard from "../JobResults/JobDetailCard";
+import EmptyState from "@components/Common/EmptyStateBox";
 const ShortlistedCandidatesPage: React.FC = () => {
   const searchParams = useSearchParams();
   const id: string | undefined = searchParams.get("id") ?? undefined; // Extract id from query parameters
@@ -96,7 +97,9 @@ const ShortlistedCandidatesPage: React.FC = () => {
 
   const handleSelectAll = (selected: boolean) => {
     if (selected) {
-      setSelectedCandidates(candidates.map((_, index) => index)); // Select all indices
+      setSelectedCandidates(
+        candidates.map((candidate, index) => candidate.candidate_id)
+      ); // Select all indices
     } else {
       setSelectedCandidates([]); // Clear selection
     }
@@ -107,29 +110,35 @@ const ShortlistedCandidatesPage: React.FC = () => {
   };
 
   return (
-    <div className="relative p-4 px-16">
-      <div className="flex justify-between items-center">
-        <div>
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 px-4 md:px-8 py-4">
+      {/* Left Panel - Job Detail */}
+      <div className="col-span-1 md:col-span-1  border-gray-200 pr-4 w-100">
+        {/* Use w-64 or adjust based on desired width */}
+        <div className="mb-4">
           {jobDetail?.data ? (
             <JobDetailCard job={jobDetail.data} />
           ) : (
             <div>Loading...</div>
           )}
         </div>
-        <div>
-          <div className="flex items-center mr-4">
-            <input
-              type="checkbox"
-              checked={selectedCandidates.length === candidates.length}
-              onChange={(e) => handleSelectAll(e.target.checked)}
-              className="mr-2 h-4 w-4 border border-primary rounded-sm bg-white checked:bg-primary checked:border-transparent focus:outline-none"
-            />
-            <p>Select All</p>
-          </div>
-        </div>
       </div>
 
-      <div className="py-4">
+      {/* Right Panel - Candidates Listing */}
+      <div className="col-span-3 md:col-span-3">
+        <div className="flex items-center justify-end">
+          <input
+            type="checkbox"
+            checked={
+              Array.isArray(selectedCandidates) &&
+              Array.isArray(candidates) &&
+              selectedCandidates.length === candidates.length
+            }
+            onChange={(e) => handleSelectAll(e.target.checked)}
+            className="w-5 h-5 cursor-pointer"
+          />
+          <p className="pl-2">Select All</p>
+        </div>
+
         {Array.isArray(candidates) && candidates.length > 0 ? (
           candidates.map((candidate) => (
             <CandidateCard
@@ -141,18 +150,20 @@ const ShortlistedCandidatesPage: React.FC = () => {
               onSelect={(selected) => {
                 handleSelect(candidate.candidate_id, selected);
               }}
+              isSelected={selectedCandidates.includes(candidate.candidate_id)}
             />
           ))
         ) : (
-          <p>No candidates available</p>
+          <EmptyState
+            message="No Candidates Shortlisted"
+            description="Start by shortlisting candidates to view them here."
+          />
         )}
       </div>
-
       <Link
-        href={`/dashboard/shortlisted-candidates/interview-schedule?candidateId=${selectedCandidates.join(
+        href={`/dashboard/shortlisted-candidates/interview-shedule?candidateId=${selectedCandidates.join(
           ","
         )}&jobId=${id}`}
-        passHref
       >
         <button
           className={`fixed bottom-4 right-4 px-16 py-4 rounded-md shadow-lg text-lg ${
