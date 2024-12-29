@@ -23,20 +23,6 @@ const Page: React.FC = () => {
           Select and organize your interview panel (Name) and time effortlessly.
         </p>
       </div>
-      <InlineWidget
-        url="https://calendly.com/tech-assetsavvy/interview-schedule"
-        prefill={{
-          name: "Shubham Tomar",
-          email: "shubtomar33@gmail.com",
-        }}
-        pageSettings={{
-          backgroundColor: "ffffff",
-          hideEventTypeDetails: false,
-          hideLandingPageDetails: false,
-          primaryColor: "FF9D00",
-          textColor: "4d5055",
-        }}
-      />
     </div>
   );
 };
