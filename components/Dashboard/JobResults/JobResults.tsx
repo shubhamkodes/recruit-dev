@@ -21,17 +21,31 @@ import {
 } from "@app/api/model/Candidate";
 import { useSearchParams } from "next/navigation";
 import { useEffect as useEffecty } from "react";
+import JobViewModel from "@app/api/viewmodel/JobViewModel";
+import { JobDetailResponse } from "@app/api/model/JobResponse";
+import JobDetailCard from "./JobDetailCard";
 
 const JobResults = () => {
   const searchParams = useSearchParams();
   const id: string | undefined = searchParams.get("id") ?? undefined; // Extract id from query parameters
   const [candidates, setCandidates] = useState<Candidate[]>([]); // Explicitly define type
-
-  const fetchJobDetail = async (jobId: number) => {
+  const [jobDetail, setJobDetail] = useState<JobDetailResponse>();
+  const fetchJobCandidates = async (jobId: number) => {
     try {
       await CandidateViewModel.loadCandidates(jobId, CandidateStatus.OPEN);
       const loadedCandidates = CandidateViewModel.getCandidates();
       setCandidates(loadedCandidates);
+    } catch (error) {
+      console.error("Failed to fetch job candidates:", error);
+    }
+  };
+
+  const fetchJobDetail = async (jobId: number) => {
+    try {
+      const jobDetailResponse = await JobViewModel.getJobDetail(
+        jobId.toString()
+      );
+      setJobDetail(jobDetailResponse);
     } catch (error) {
       console.error("Failed to fetch job candidates:", error);
     }
@@ -42,7 +56,8 @@ const JobResults = () => {
     if (id) {
       const jobId = parseInt(id, 10); // Convert id to number
       if (!isNaN(jobId)) {
-        fetchJobDetail(jobId); // Fetch details if id is valid
+        fetchJobCandidates(jobId); // Fetch details if id is valid
+        fetchJobDetail(jobId);
       } else {
         console.error("Invalid jobId:", id);
       }
@@ -107,7 +122,11 @@ const JobResults = () => {
     <div className="px-16 py-2">
       <div className="flex justify-between items-center">
         <div>
-          {id && <div className="font-bold text-lg mb-4">Job ID: {id}</div>}
+          {jobDetail?.data ? (
+            <JobDetailCard job={jobDetail.data} />
+          ) : (
+            <div>Loading...</div>
+          )}
         </div>
         <div>
           <Button className="bg-clear shadow-md text-primary text-base hover:bg-secondary space-x-2">

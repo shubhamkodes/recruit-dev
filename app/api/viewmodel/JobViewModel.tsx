@@ -1,4 +1,4 @@
-import { JobResponse } from "../model/JobResponse";
+import { JobDetailResponse, JobResponse } from "../model/JobResponse";
 import { JobSearchResponse } from "../model/JobSearchResponse";
 import JobRepository from "../repo/JobRepo";
 
@@ -10,6 +10,17 @@ class JobViewModel {
         return jobResponse; // Return the fetched response
       } catch (error) {
         console.error('Failed to fetch jobs:', error);
+        throw error;
+      }
+    }
+
+    async getJobDetail(jobId: string): Promise<JobDetailResponse> {
+      try {
+        const jobResponse = await JobRepository.getJobDetail(jobId);
+        console.log('Fetched jobs:', jobResponse.data);
+        return jobResponse; // Return the fetched response
+      } catch (error) {
+        console.error('Failed to fetch job detail:', error);
         throw error;
       }
     }

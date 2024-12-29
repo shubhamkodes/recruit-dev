@@ -49,11 +49,21 @@ const CandidateCard: React.FC<CandidateProps> = ({
   return (
     <div className="shadow-xl rounded-lg mt-12 mb-6 p-4">
       <div className="flex flex-row justify-between items-center">
-        <div className="flex items-start">
-          <h2 className="text-xl font-bold mb-2">{candidate.candidate.name}</h2>
-          <span className="ml-2 bg-green-100 text-green-800 text-xs font-bold px-2.5 py-1.5 rounded-full">
-            {candidate.candidate.score}
-          </span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-start">
+            <h2 className="text-xl font-bold mb-2">
+              {candidate.candidate.name}
+            </h2>
+            <span className="ml-2 bg-green-100 text-green-800 text-xs font-bold px-2.5 py-1.5 rounded-full">
+              {candidate.candidate.score}
+            </span>
+          </div>
+          <input
+            type="checkbox"
+            className="ml-4 w-5 h-5 cursor-pointer"
+            onChange={(e) => handleSelect()}
+            checked={isSelected}
+          />
         </div>
 
         <button

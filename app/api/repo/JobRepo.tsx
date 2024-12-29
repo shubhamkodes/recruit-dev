@@ -1,11 +1,21 @@
 import ApiService from "../service/ApiService";
-import { JobResponse } from "../model/JobResponse";
+import { JobDetailResponse, JobResponse } from "../model/JobResponse";
 import { JobSearchResponse } from "../model/JobSearchResponse";
 
 class JobRepository {
     async getJobs(): Promise<JobResponse> {
       try {
         const response = await ApiService.get<JobResponse>('jobs/api/v1/search-list');
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+        throw error;
+      }
+    }
+
+    async getJobDetail(jobId: String): Promise<JobDetailResponse> {
+      try {
+        const response = await ApiService.get<JobDetailResponse>(`jobs/api/v1/job-detail/${jobId}`);
         return response.data;
       } catch (error) {
         console.error('Error fetching jobs:', error);

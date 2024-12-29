@@ -15,19 +15,12 @@ const Dasbhoard = () => {
       {!isModalOpen && (
         <>
           <AccelerateHiring />
-          <div className="dashboard flex flex-col md:flex-row gap-8 p-8">
-            <div className="w-full">
-              <JobList />
-            </div>
-            {/* <div className="md:w-1/2 w-full">
-              <UserSearchAnalytics />
-            </div> */}
-          </div>
-         <JobTableContainer />
+
+          <JobTableContainer />
         </>
       )}
       <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-        <AggregatorSelector onClose={handleModalClose}/>
+        <AggregatorSelector onClose={handleModalClose} />
       </Modal>
     </div>
   );

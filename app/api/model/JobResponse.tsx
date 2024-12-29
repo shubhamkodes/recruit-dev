@@ -1,3 +1,5 @@
+import { NoticePeriodStatus } from "./NoticePeriodStatus";
+
 export interface Job {
     id: number;
     keyword: string;
@@ -8,6 +10,14 @@ export interface Job {
     max_exp: string;
     status: string;
     created_at: string;
+    skills: string[],
+    notice_period: NoticePeriodStatus
+}
+
+
+export interface JobDetailResponse {
+    message: string;
+    data: Job;
 }
 
 export interface JobResponse {
