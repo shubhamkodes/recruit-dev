@@ -1,11 +1,15 @@
-'use client';
+"use client";
 
+import CandidateViewModel from "@app/api/viewmodel/CandidateViewModel";
 import JobResults from "@components/Dashboard/JobResults/JobResults";
-import React from "react";
+import { useRouter } from "next/router"; // Import useRouter to get query params
+import { useState, useEffect } from "react";
 
 const page = () => {
+
+
   return (
-    <div >
+    <div>
       <JobResults />
     </div>
   );

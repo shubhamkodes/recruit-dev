@@ -19,7 +19,9 @@ class JobRepository {
       max_ctc: string,
       location: string,
       min_exp: string,
-      max_exp: string
+      max_exp: string,
+      notice_period: number,
+      skills: string[] 
     ): Promise<JobSearchResponse> {
       const endpoint = "/jobs/api/v1/search";
   
@@ -31,6 +33,8 @@ class JobRepository {
           location,
           min_exp,
           max_exp,
+          skills,
+          notice_period
         });
         console.log("API Response:", response.data);
         return response.data;

@@ -20,7 +20,9 @@ class JobViewModel {
       max_ctc: string,
       location: string,
       min_exp: string,
-      max_exp: string
+      max_exp: string,
+      notice_period: number,
+      skills: string[] 
     ): Promise<JobSearchResponse> {
       try {
         const response = await JobRepository.searchJobs(
@@ -29,7 +31,9 @@ class JobViewModel {
           max_ctc,
           location,
           min_exp,
-          max_exp
+          max_exp,
+          notice_period,
+          skills
         );
         console.log("Job search successful:", response);
         return response;

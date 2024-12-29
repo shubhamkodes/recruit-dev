@@ -8,7 +8,11 @@ const AccelerateHiring: React.FC = () => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   const handleModalOpen = () => setModalOpen(true);
-  const handleModalClose = () => setModalOpen(false);
+  // Close modal and refresh page
+  const handleModalClose = () => {
+    setModalOpen(false);
+    window.location.reload(); // Refresh the whole page
+  };
 
   return (
     <div className="px-8">
@@ -44,7 +48,7 @@ const AccelerateHiring: React.FC = () => {
         </div>
       </div>
       <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-        <JobDescriptionForm />
+        <JobDescriptionForm onDismiss={handleModalClose} />
       </Modal>
     </div>
   );

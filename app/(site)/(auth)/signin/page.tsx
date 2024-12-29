@@ -4,15 +4,17 @@ import { useState } from "react";
 import { ToastContainer, Slide, toast } from "react-toastify";
 import AuthViewModel from "@app/api/viewmodel/AuthViewModel";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 
 const Signin = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login form submitted with:', { email, password });
+    console.log("Login form submitted with:", { email, password });
 
     try {
       await AuthViewModel.login(email, password);
@@ -21,14 +23,15 @@ const Signin = () => {
         autoClose: 4000,
         transition: Slide,
       });
-      console.log('AuthViewModel login success');
+      router.push("/dashboard");
+      console.log("AuthViewModel login success");
     } catch (error) {
       toast.error("Login failed. Please check your credentials.", {
         position: "bottom-center",
         autoClose: 4000,
         transition: Slide,
       });
-      console.error('AuthViewModel login failed:', error);
+      console.error("AuthViewModel login failed:", error);
     }
   };
 
@@ -53,7 +56,9 @@ const Signin = () => {
             <div className="relative mx-auto w-full overflow-hidden rounded-lg bg-white px-8 py-14 text-center dark:bg-dark-2 sm:px-12 md:px-[60px]">
               <form onSubmit={handleLogin}>
                 <div className="w-full max-w-xs text-left">
-                  <h1 className="py-10 text-4xl font-bold leading-tight">Login</h1>
+                  <h1 className="py-10 text-4xl font-bold leading-tight">
+                    Login
+                  </h1>
                 </div>
                 <div className="mb-[22px]">
                   <input

@@ -1,47 +1,22 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import React, { useState } from "react";
 import ShortlistButton from "../JobResults/ShortlistButton";
+import {
+  Candidate,
+  CandidateStatus,
+  isRejected,
+  isShortlisted,
+} from "@app/api/model/Candidate";
 
 export interface CandidateProps {
-  name: string;
-  experience: string;
-  education: string;
-  projects: string[];
-  contactInfo: {
-    email: string;
-    phone: string;
-    linkedin: string;
-  };
-  summary: string;
-  technicalSkills: string[];
-  professionalExperience: {
-    role: string;
-    company: string;
-    duration: string;
-    responsibilities: string[];
-  }[];
-  certifications: string[];
-  showSelect?: boolean;
-  isShortlisted?: boolean;
-  isRejected?: boolean;
-  onShortlist?: () => void;
+  candidate: Candidate;
+  onUpdateStatus?: (status: CandidateStatus) => void;
   onSelect?: (selected: boolean) => void;
 }
 
 const CandidateCard: React.FC<CandidateProps> = ({
-  name,
-  experience,
-  education,
-  projects,
-  contactInfo,
-  summary,
-  technicalSkills,
-  professionalExperience,
-  certifications,
-  showSelect = false,
-  isShortlisted = false,
-  isRejected = false,
-  onShortlist,
+  candidate,
+  onUpdateStatus,
   onSelect,
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -59,99 +34,90 @@ const CandidateCard: React.FC<CandidateProps> = ({
     }
   };
 
+  const handleShortlist = () => {
+    if (onUpdateStatus) {
+      onUpdateStatus(CandidateStatus.SHORTLISTED);
+    }
+  };
+
+  const handleReject = () => {
+    if (onUpdateStatus) {
+      onUpdateStatus(CandidateStatus.REJECTED);
+    }
+  };
+
   return (
     <div className="shadow-xl rounded-lg mt-12 mb-6 p-4">
-      <div className="flex">
-        <h2 className="text-xl font-bold mb-2">{name}</h2>
-
-        <div className="flex flex-nowrap items-center">
-          {showSelect && (
-            <div className="flex items-center mr-4 justify-between">
-              <input
-                type="checkbox"
-                checked={isSelected}
-                onChange={handleSelect}
-                className="mr-2 h-4 w-4 border border-primary rounded-sm justify-between bg-white checked:bg-primary checked:border-transparent focus:outline-none"
-              />
-              <p>Select</p>
-            </div>
-          )}
-          <button
-            onClick={toggleCollapse}
-            className="text-blue-500 flex items-center"
-          >
-            {isCollapsed ? <ChevronDownIcon /> : <ChevronUpIcon />}
-          </button>
+      <div className="flex flex-row justify-between items-center">
+        <div className="flex items-start">
+          <h2 className="text-xl font-bold mb-2">{candidate.candidate.name}</h2>
+          <span className="ml-2 bg-green-100 text-green-800 text-xs font-bold px-2.5 py-1.5 rounded-full">
+            {candidate.candidate.score}
+          </span>
         </div>
+
+        <button
+          onClick={toggleCollapse}
+          className="text-blue-500 flex items-center"
+        >
+          {isCollapsed ? (
+            <ChevronDownIcon className="h-6 w-6" />
+          ) : (
+            <ChevronUpIcon className="h-6 w-6" />
+          )}
+        </button>
       </div>
-      <p className="text-gray-600 mb-2">{experience}</p>
       <div className="mb-4">
-        <h3 className="font-semibold">Education</h3>
-        <p>{education}</p>
-      </div>
-      <div className="mb-4">
-        <h3 className="font-semibold">Projects</h3>
-        <ul className="list-disc ml-5">
-          {projects.map((project, index) => (
-            <li key={index}>{project}</li>
-          ))}
-        </ul>
+        <p>Experience: {candidate.candidate.experience}</p>
+        <p>Current Location: {candidate.candidate.current_location}</p>
+        <p>Current Employment: {candidate.candidate.current_employment}</p>
       </div>
       {!isCollapsed && (
         <>
           <div className="mb-4">
-            <h3 className="font-semibold">Contact Information</h3>
-            <p>Email: {contactInfo.email}</p>
-            <p>Phone: {contactInfo.phone}</p>
-            <p>LinkedIn: {contactInfo.linkedin}</p>
+            <h3 className="font-semibold">Education</h3>
+            <p>{candidate.candidate.education}</p>
           </div>
           <div className="mb-4">
-            <h3 className="font-semibold">Summary</h3>
-            <p>{summary}</p>
-          </div>
-          <div className="mb-4">
-            <h3 className="font-semibold">Technical Skills</h3>
-            <ul className="list-disc ml-5">
-              {technicalSkills.map((skill, index) => (
-                <li key={index}>{skill}</li>
+            <h3 className="font-semibold">Key Skills</h3>
+            <div className="flex flex-wrap gap-2">
+              {JSON.parse(
+                candidate.candidate.key_skills.replace(/'/g, '"')
+              ).map((skill: string, index: number) => (
+                <span
+                  key={index}
+                  className="bg-gray-200 text-gray-800 text-sm px-2 py-1 rounded"
+                >
+                  {skill}
+                </span>
               ))}
-            </ul>
+            </div>
           </div>
           <div className="mb-4">
-            <h3 className="font-semibold">Professional Experience</h3>
-            {professionalExperience.map((experience, index) => (
-              <div key={index} className="mb-2">
-                <p className="font-semibold">
-                  {experience.role} at {experience.company}
-                </p>
-                <p>{experience.duration}</p>
-                <ul className="list-disc ml-5">
-                  {experience.responsibilities.map((resp, i) => (
-                    <li key={i}>{resp}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <div className="mb-4">
-            <h3 className="font-semibold">Certifications</h3>
-            <ul className="list-disc ml-5">
-              {certifications.map((cert, index) => (
-                <li key={index}>{cert}</li>
+            <h3 className="font-semibold">Additional Skills</h3>
+            <div className="flex flex-wrap gap-2">
+              {JSON.parse(
+                candidate.candidate.additional_skills.replace(/'/g, '"')
+              ).map((skill: string, index: number) => (
+                <span
+                  key={index}
+                  className="bg-gray-200 text-gray-800 text-sm px-2 py-1 rounded"
+                >
+                  {skill}
+                </span>
               ))}
-            </ul>
+            </div>
           </div>
         </>
       )}
 
       <div>
-        {!showSelect && (
-          <ShortlistButton
-            isShortlisted={isShortlisted}
-            isRejected={isRejected}
-            onClick={onShortlist || (() => {})}
-          />
-        )}
+        <ShortlistButton
+          isShortlisted={isShortlisted(candidate)}
+          isRejected={isRejected(candidate)}
+          onShortlist={handleShortlist}
+          onReject={handleReject}
+        />
       </div>
     </div>
   );

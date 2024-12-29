@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   candidateSelectionState,
   educationLevelFilters,
@@ -12,10 +11,64 @@ import { Button } from "@components/ui/Button";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { CrossCircledIcon } from "@radix-ui/react-icons";
 import CandidateCard from "../Components/CandidateCard";
-import { candidates } from "./FakeProfileData";
 import Link from "next/link";
+import CandidateViewModel from "@app/api/viewmodel/CandidateViewModel";
+import { useState } from "react";
+import {
+  CandidatesResponse,
+  Candidate,
+  CandidateStatus,
+} from "@app/api/model/Candidate";
+import { useSearchParams } from "next/navigation";
+import { useEffect as useEffecty } from "react";
 
 const JobResults = () => {
+  const searchParams = useSearchParams();
+  const id: string | undefined = searchParams.get("id") ?? undefined; // Extract id from query parameters
+  const [candidates, setCandidates] = useState<Candidate[]>([]); // Explicitly define type
+
+  const fetchJobDetail = async (jobId: number) => {
+    try {
+      await CandidateViewModel.loadCandidates(jobId, CandidateStatus.OPEN);
+      const loadedCandidates = CandidateViewModel.getCandidates();
+      setCandidates(loadedCandidates);
+    } catch (error) {
+      console.error("Failed to fetch job candidates:", error);
+    }
+  };
+
+  // Ensure fetchJobDetail is called only once when `id` changes
+  useEffecty(() => {
+    if (id) {
+      const jobId = parseInt(id, 10); // Convert id to number
+      if (!isNaN(jobId)) {
+        fetchJobDetail(jobId); // Fetch details if id is valid
+      } else {
+        console.error("Invalid jobId:", id);
+      }
+    }
+  }, [id]);
+
+  const handleUpdateStatus = async (
+    candidateId: number,
+    status: CandidateStatus
+  ) => {
+    try {
+      await CandidateViewModel.updateCandidateStatus(candidateId, status);
+      console.log(`Candidate ${candidateId} status updated to ${status}`);
+
+      // Refresh the UI with updated data
+      if (id) {
+        const jobId = parseInt(id, 10);
+        if (!isNaN(jobId)) {
+          fetchJobDetail(jobId); // Fetch updated candidates after status update
+        }
+      }
+    } catch (error) {
+      console.error(`Error updating candidate ${candidateId} status:`, error);
+    }
+  };
+
   const [selectedPayFilters, setSelectedPayFilters] = useState<Set<string>>(
     new Set()
   );
@@ -54,14 +107,13 @@ const JobResults = () => {
     <div className="px-16 py-2">
       <div className="flex justify-between items-center">
         <div>
-          <div className="font-bold">Job ID: 123</div>
-          <div className="text">Python Developer Profile</div>
+          {id && <div className="font-bold text-lg mb-4">Job ID: {id}</div>}
         </div>
         <div>
           <Button className="bg-clear shadow-md text-primary text-base hover:bg-secondary space-x-2">
             <span>
-              <Link href={"/dashboard/shortlisted-candidates"}>
-              View all shortlisted profiles
+              <Link href={`/dashboard/shortlisted-candidates?id=${id}`}>
+                View all shortlisted profiles
               </Link>
             </span>
             <ChevronRightIcon className="w-6 h-6" />
@@ -119,12 +171,28 @@ const JobResults = () => {
       </div>
 
       <div className="py-4">
-        {candidates.map((candidate, index) => (
-          <CandidateCard key={index} {...candidate} />
-        ))}
+        {Array.isArray(candidates) && candidates.length > 0 ? (
+          candidates.map((candidate) => (
+            <CandidateCard
+              key={candidate.candidate_id}
+              candidate={candidate}
+              onUpdateStatus={(status) =>
+                handleUpdateStatus(candidate.candidate_id, status)
+              }
+              onSelect={(selected) =>
+                console.log(`Selected ${candidate.candidate.name}: ${selected}`)
+              }
+            />
+          ))
+        ) : (
+          <p>No candidates available</p>
+        )}
       </div>
     </div>
   );
 };
 
 export default JobResults;
+function useEffect(arg0: () => void, arg1: (string | string[] | undefined)[]) {
+  throw new Error("Function not implemented.");
+}
