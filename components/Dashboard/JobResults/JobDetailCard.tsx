@@ -52,7 +52,7 @@ const JobDetailCard: React.FC<JobDetailProps> = ({ job }) => {
 
       {/* Footer */}
       <p className="mt-6 text-sm text-gray-500">
-        Posted on: {new Date(job.created_at).toLocaleDateString()}
+        Searched on: {new Date(job.created_at).toLocaleDateString()}
       </p>
     </div>
   );

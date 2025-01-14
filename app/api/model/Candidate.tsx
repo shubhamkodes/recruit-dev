@@ -17,13 +17,13 @@ export interface Candidate {
 }
 
 export enum CandidateStatus {
-  REJECTED = 'REJECTED',
-  SHORTLISTED = 'SHORTLISTED',
-  OPEN = 'OPEN',
-  INPROGRESS = 'INPROGRESS'
+  REJECTED = "REJECTED",
+  SHORTLISTED = "SHORTLISTED",
+  OPEN = "OPEN",
+  INPROGRESS = "INPROGRESS",
 }
 
-  // Extension function to check if the candidate is shortlisted
+// Extension function to check if the candidate is shortlisted
 export function isShortlisted(candidate: Candidate): boolean {
   return candidate.status === "SHORTLISTED";
 }
@@ -37,11 +37,11 @@ export function isRejected(candidate: Candidate): boolean {
 export function isOpen(candidate: Candidate): boolean {
   return candidate.status === "OPEN";
 }
-  
-  export interface CandidatesResponse {
-    message: string;
-    data: {
-      candidates: Candidate[];
-      created_at: string;
-    };
-  }
+
+export interface CandidatesResponse {
+  message: string;
+  data: {
+    candidates: Candidate[];
+    created_at: string;
+  };
+}

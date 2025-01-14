@@ -4,7 +4,7 @@ import { Button } from "@components/ui/Button";
 import CandidateCard, { CandidateProps } from "../Components/CandidateCard";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Candidate, CandidateStatus } from "@app/api/model/Candidate";
 import CandidateViewModel from "@app/api/viewmodel/CandidateViewModel";
 import { JobDetailResponse } from "@app/api/model/JobResponse";
@@ -13,6 +13,7 @@ import JobDetailCard from "../JobResults/JobDetailCard";
 import EmptyState from "@components/Common/EmptyStateBox";
 const ShortlistedCandidatesPage: React.FC = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const id: string | undefined = searchParams.get("id") ?? undefined; // Extract id from query parameters
   const [candidates, setCandidates] = useState<Candidate[]>([]); // Explicitly define type
   const [selectedCandidates, setSelectedCandidates] = useState<number[]>([]); // Store indices of selected candidates
@@ -151,6 +152,11 @@ const ShortlistedCandidatesPage: React.FC = () => {
                 handleSelect(candidate.candidate_id, selected);
               }}
               isSelected={selectedCandidates.includes(candidate.candidate_id)}
+              onScheduleInterview={() => {
+                router.push(
+                  `/dashboard/shortlisted-candidates/interview-shedule?candidateId=${candidate.candidate_id}&jobId=${id}`
+                );
+              }}
             />
           ))
         ) : (
@@ -160,23 +166,17 @@ const ShortlistedCandidatesPage: React.FC = () => {
           />
         )}
       </div>
-      <Link
-        href={`/dashboard/shortlisted-candidates/interview-shedule?candidateId=${selectedCandidates.join(
-          ","
-        )}&jobId=${id}`}
-      >
-        <button
-          className={`fixed bottom-4 right-4 px-16 py-4 rounded-md shadow-lg text-lg ${
-            selectedCandidates.length > 0
-              ? "bg-primary text-white"
-              : "bg-gray-400 text-gray-200 cursor-not-allowed"
-          }`}
-          disabled={selectedCandidates.length === 0}
+      {selectedCandidates.length > 0 && (
+        <Link
+          href={`/dashboard/shortlisted-candidates/interview-shedule?candidateId=${selectedCandidates.join(
+            ","
+          )}&jobId=${id}`}
         >
-          Schedule Interview
-          {selectedCandidates.length > 0 && ` (${selectedCandidates.length})`}
-        </button>
-      </Link>
+          <button className="fixed bottom-4 right-4 px-16 py-4 rounded-md shadow-lg text-lg bg-primary text-white">
+            Schedule Interview ({selectedCandidates.length})
+          </button>
+        </Link>
+      )}
     </div>
   );
 };

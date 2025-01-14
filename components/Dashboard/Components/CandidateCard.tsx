@@ -14,6 +14,7 @@ export interface CandidateProps {
   onUpdateStatus?: (status: CandidateStatus) => void;
   onSelect?: (selected: boolean) => void;
   isSelected?: Boolean;
+  onScheduleInterview?: () => void;
 }
 
 const CandidateCard: React.FC<CandidateProps> = ({
@@ -21,6 +22,7 @@ const CandidateCard: React.FC<CandidateProps> = ({
   onUpdateStatus,
   onSelect,
   isSelected,
+  onScheduleInterview,
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
@@ -53,7 +55,12 @@ const CandidateCard: React.FC<CandidateProps> = ({
             <h2 className="text-xl font-bold mb-2">
               {candidate.candidate.name}
             </h2>
-            <span className="bg-green-100 text-green-800 text-sm font-bold px-2.5 py-1.5 rounded-full ml-3 ">
+            <span className="bg-green-100 text-green-800 text-sm font-bold px-2.5 py-1.5 rounded-full ml-3 flex items-center">
+              <img
+                src="/ic_certified.svg" // Replace this with your image path
+                alt="Icon"
+                className="w-5 h-5 mr-2" // Adjust width, height, and margin as needed
+              />
               {candidate.candidate.score} / 10
             </span>
           </div>
@@ -139,6 +146,10 @@ const CandidateCard: React.FC<CandidateProps> = ({
           isRejected={isRejected(candidate)}
           onShortlist={handleShortlist}
           onReject={handleReject}
+          onDownloadCV={() => {}}
+          onScheduleInterview={() => {
+            onScheduleInterview?.();
+          }}
         />
       </div>
     </div>

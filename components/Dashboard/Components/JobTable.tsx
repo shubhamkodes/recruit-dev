@@ -34,7 +34,7 @@ const JobTable: React.FC<JobTableProps> = ({
             <th className="text-orange-500 py-2">Job ID</th>
             <th className="text-orange-500 py-2">Job Title</th>
             <th className="text-orange-500 py-2">Status</th>
-            <th className="text-orange-500 py-2">Posted On</th>
+            <th className="text-orange-500 py-2">Searched On</th>
           </tr>
         </thead>
 
